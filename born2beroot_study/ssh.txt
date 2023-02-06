@@ -1,0 +1,25 @@
+ssh 설치 :
+	apt install openssh-server
+
+SSH 포트 변경:
+	/etc/ssh/sshd_config을 열어서 설정을 변경한다.
+	sshd_config : 서버 측 설정 파일
+	ssh_config : 클라이언트 측 설정 파일
+	port 4242로 변경
+	PermitRootLogin no 로 변경하면 ssh를 통해 root에 접근을 막는다.
+
+SSH 재시작:
+	systemctl restart ssh
+
+SSH 상태 확인:
+	systemctl status ssh
+
+포트 포워딩
+	포트 포워딩(port forwarding)이란 외부에서 들어오는 패킷을 내부의
+	적절한 포트로 전달하는 것을 의미한다.
+
+	hostname -I 가상 머신 IP 주소 조회
+
+	ipconfig getifaddr en0
+
+	ssh [가상머신 계정명]@[호스트 IP주소] -p [호스트 포트번호] : 로컬 컴퓨터에서 실행

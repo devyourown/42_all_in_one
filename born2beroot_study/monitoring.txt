@@ -1,0 +1,104 @@
+printf "#Architecture: "
+uname -a
+
+printf "#CPU physical : "
+nproc --all
+
+printf "#vCPU : "
+cat /proc/cpuinfo | grep processor | wc -l
+
+printf "#Memory Usage: "
+free -m | grep Mem | awk '{printf"%d/%dMB (%.2f%%)\n", $3, $2, $3/$2 * 100}'
+
+printf "#Disk Usage: "
+df -a -BM | grep /dev/map | awk '{sum+=$3}END{print sum}' | tr -d '\n'
+printf "/"
+df -a -BM | grep /dev/map | awk '{sum+=$4}END{print sum}' | tr -d '\n'
+printf "MB ("
+df -a -BM | grep /dev/map | awk '{sum1+=$3 ; sum2+=$4 }END{printf "%d", sum1 / sum2 * 100}' | tr -d '\n'
+printf "%%)\n"
+
+printf "#CPU load: "
+mpstat | grep all | awk '{printf "%.2f%%\n", 100-$13}'
+
+printf "#Last boot: "
+who -b | awk '{printf $3" "$4"\n"}'
+
+printf "#LVM use: "
+if [ "$(lsblk | grep lvm | wc -l)" -gt 0 ] ; then printf "yes\n" ; else printf "no\n" ; fi
+
+printf "#Connections TCP : "
+ss | grep -i tcp | wc -l | tr -d '\n'
+printf " ESTABLISHED\n"
+
+printf "#User log: "
+who | wc -l
+
+printf "#Network: IP "
+hostname -I | tr -d '\n'
+printf "("
+ip link | awk '$1 == "link/ether" {print $2}' | sed '2, $d' | tr -d '\n'
+printf ")\n"
+
+printf "#Sudo : "
+journalctl _COMM=sudo | grep USER=root | wc -l | tr -d '\n'
+printf " cmd\n"
+
+1. 운영 체제의 아키텍처 및 커널 버전
+2. 물리적 프로세서의 수
+3. 가상 프로세서 수
+4. 서버의 현재 사용 가능한 RAM과 활용률
+5. 서버의 현재 가용 메모리와 활용률
+6. 프로세서의 현재 활용률
+7. 마지막으로 재부팅한 날짜 및 시간
+8. LVM의 활성 여부
+9. 활성 연결 수
+10. 서버를 사용하는 사용자 수
+11. 서버의 IPv4 주소와 MAC(Media Access Control) 주소
+12. sudo 프로그램으로 실행된 명령의 수
+
+1. uname : 시스템 정보 출력 -a: 아키텍처와 커널 버전까지 출력
+
+2. nproc --all : 모든 프로세서의 개수 표시
+
+3. cat /proc/cpuinfo | grep processor | wc -l
+
+4.	free -m | grep Mem | awk '{printf"%d/%dMB (%.2f%%)\n", $3, $2, $3/$2 * 100}'
+	free : 메모리 전체적인 현황 표시
+
+5. df : 하드 디스크의 저장 공간 현황
+-a : 모든 파일시스템을 출력한다.
+-B : 지정용량을 블럭단위로 정하여 용량을 출력한다.
+
+
+6. 프로세서 사용률
+	프로세서의 사용 가능 용량과 Core 별 사용량을 출력하려면 mpstat 이라는 명령어를 사용한다.
+	이를 위해서는 sysstat이 필요하다. sudo apt install sysstat
+
+7. 마지막 부팅 시간과 날짜
+	last 명령어를 사용하면 마지막 로그인과 부팅 종료를 보여준다.
+	또는 who 명령어를 사용할 수 있다. -b를 사용하면 마지막 시스템 부팅 시간을 출력한다.
+
+8. LVM 활성화 여부
+	lsblk 명령어는 현재 장착된 디스크의 현황을 보여준다.
+
+9. 활성 연결수
+	ss 명령어는 소켓 상태를 조회한다.
+	u_str: unix stream의 약자로 입출력 장치를 연결하는 소켓으로 본다.
+	ESTAB: 연결이 지속되고 있는 상태를 의미한다.
+	-t 옵션을 사용하면 tcp 네트워크 정보를 확인할 수 있다.
+
+10. 서버를 사용하는 사용자 수
+	who 명령어를 사용해서 출력할 수 있다.
+
+11. 네트워크 IP 및 MAC 주소
+	hostname -I IPv4주소를 표시한다.
+	ip link를 입력하면 MAC 주소를 조회할 수 있다.
+	MAC 주소란 Media Access Control Address 의 약자로 컴퓨터 간 데이터를 전송하기 위해 존재하는 고유한 물리적 주소이다.
+	IP 주소는 네트워크 상황에 따라 다른 번호를 할당 받을 수도 있지만, MAC 주소는 이더넷 장비는 각각 고유한 주소를 할당받기 때문에 변하지 않는다.
+	심지어 스마트폰이나 블루투스 이어폰에도 고유 주소가 할당되어 있다.
+	sed '2, $d' 명령어는 2행부터 마지막 줄은 삭제($d)한다는 명령이다.
+
+12. sudo로 실행한 명령어 수
+	journalctl 는 리눅스용 시스템 매니저인 systemd 가 저장한 로그 데이터 journal 에서 검색할 수 있는 명령어이다.
+	_COMM 옵션을 사용하면 특정 명령어를 사용한 로그를 확인할 수 있다.

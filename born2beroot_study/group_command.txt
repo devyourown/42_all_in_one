@@ -1,0 +1,13 @@
+groupadd <groupname> : 그룹 이름으로 그룹을 만든다.
+
+usermod -aG <그룹명, ...> <사용자명> : 그룹에 사용자를 추가한다.
+
+useradd <username> : 유저 이름으로 유저를 만든다. -m을 사용하면 홈 디렉터리도 같이 생성한다.
+
+/etc/passwd : 생성된 유저를 확인할 수 있는 파일
+
+adduser <username> : 유저를 만들고 비밀번호 설정, 홈 디렉터리 생성들을 알아서 해줍니다.
+
+userdel <username> : 유저를 삭제한다. 관련된 모든 내용을 삭제하기 위해 -r 옵션을 준다.
+
+deluser <username> : 유저를 삭제한다. 관련 내용을 알아서 지워준다. --remove

@@ -1,0 +1,34 @@
+adduser <username> : 새 사용자 계정을 만듭니다.
+usermod -aG <groupname> <username> : 사용자를 그룹에 추가합니다.
+
+su -l <username> : 사용자로 전환합니다.
+sudo whoami : 사용자에게 sudo 액세스 권한이 있는 경우 whoami는 root를 반환합니다.
+
+groupadd <groupname> : group을 생성합니다.
+groups (사용자 이름): (사용자의)그룹을 확인합니다.
+
+visudo : sudoers 파일을 수정하기 위한 명령어
+
+apt install sudo : 수도를 다운
+
+sudo 는 권한이 강력하기 때문에 보안상의 이유로 secure_path 기능을 제공하고 있다.
+secure_path 는 sudo 명령을 실행할 때 사용하는 가상 쉘의 경로를 설정하는 것이다.
+sudo 명령을 실행할 때 현재 계정의 쉘이 아닌 새로운 쉘을 생성하고 그 안에서 명령을 실행하는데,
+이때 명령을 찾을 경로를 나열한 환경변수인 PATH 값이 secure_path 가 된다.
+즉, sudo 명령을 통해 실행하는 명령은 제 3의 쉘 환경에서 샌드박스 형태로 실행된다.
+이 기능이 중요한 이유는 트로이목마 해킹 공격에 대한 1차적인 방어 기능을 제공하기 때문이다. 만약,
+현재 계정의 PATH 에 악의적인 경로가 포함된 경우, secure_path 를 설정하면
+이를 무시함으로써 sudo 를 통해 전체 시스템이 해킹되는 경우를 방지할 수 있다.
+
+authfail_message : 인증에 실패하면 표시하는 메세지. %d 를 입력하면 로그인 실패한 횟수도
+같이 표시할 수 있다.
+badpass_message : 잘못된 비밀번호를 입력할 경우 표시할 메세지.
+log_input : sudo 를 이용해서 입력한 명령어를 로그 파일로 저장한다.
+log_output : sudo 를 이용해서 실행한 명령어의 실행 결과를 로그 파일로 저장한다.
+requiretty : 사용자가 실제 tty 로 로그인한 경우에만 sudo 를 실행하는 설정이다. 예컨대,
+		batch 파일이나 cron 에 작성된 스크립트를 실행하는 경우에는 작동하지 않는 것이다.
+iolog_dir : log 가 기록될 위치를 설정한다.
+passwd_tries : 비밀번호 입력 시도 최대 회수를 설정한다.
+
+ssh에서 su 명령어 막기 :
+	
